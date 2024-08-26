@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Testing Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { text-align: center; }
+        form { margin-bottom: 20px; }
+        textarea { width: 100%; height: 100px; }
+        .response { margin-top: 20px; padding: 10px; border: 1px solid #ddd; background: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <h1>API Testing Page</h1>
+
+    <!-- Clients Form -->
+    <h2>Clients</h2>
+    <form id="clients-form">
+        <h3>Get Clients</h3>
+        <button type="button" onclick="getClients()">Get Clients</button>
+        <h3>Add Client</h3>
+        <input type="text" id="client-name" placeholder="Name" required>
+        <input type="text" id="client-description" placeholder="Description">
+        <textarea id="client-image" placeholder="Image (Array of Bits)"></textarea>
+        <input type="text" id="client-designation" placeholder="Designation">
+        <button type="button" onclick="addClient()">Add Client</button>
+        <h3>Update Client</h3>
+        <input type="text" id="client-id-update" placeholder="Client ID" required>
+        <input type="text" id="client-name-update" placeholder="Name">
+        <input type="text" id="client-description-update" placeholder="Description">
+        <textarea id="client-image-update" placeholder="Image (Array of Bits)"></textarea>
+        <input type="text" id="client-designation-update" placeholder="Designation">
+        <button type="button" onclick="updateClient()">Update Client</button>
+        <h3>Delete Client</h3>
+        <input type="text" id="client-id-delete" placeholder="Client ID" required>
+        <button type="button" onclick="deleteClient()">Delete Client</button>
+    </form>
+
+    <!-- Projects Form -->
+    <h2>Projects</h2>
+    <form id="projects-form">
+        <h3>Get Projects</h3>
+        <button type="button" onclick="getProjects()">Get Projects</button>
+        <h3>Add Project</h3>
+        <input type="text" id="project-name" placeholder="Name" required>
+        <input type="text" id="project-description" placeholder="Description">
+        <textarea id="project-image" placeholder="Image (Array of Bits)"></textarea>
+        <button type="button" onclick="addProject()">Add Project</button>
+        <h3>Update Project</h3>
+        <input type="text" id="project-id-update" placeholder="Project ID" required>
+        <input type="text" id="project-name-update" placeholder="Name">
+        <input type="text" id="project-description-update" placeholder="Description">
+        <textarea id="project-image-update" placeholder="Image (Array of Bits)"></textarea>
+        <button type="button" onclick="updateProject()">Update Project</button>
+        <h3>Delete Project</h3>
+        <input type="text" id="project-id-delete" placeholder="Project ID" required>
+        <button type="button" onclick="deleteProject()">Delete Project</button>
+    </form>
+
+    <!-- Newsletter Form -->
+    <h2>Newsletter</h2>
+    <form id="newsletter-form">
+        <h3>Get Newsletter Subscribers</h3>
+        <button type="button" onclick="getNewsletter()">Get Newsletter Subscribers</button>
+        <h3>Add Newsletter Subscriber</h3>
+        <input type="text" id="newsletter-name" placeholder="Name" required>
+        <input type="email" id="newsletter-email" placeholder="Email" required>
+        <button type="button" onclick="addNewsletter()">Add Subscriber</button>
+        <h3>Update Newsletter Subscriber</h3>
+        <input type="text" id="newsletter-id-update" placeholder="Subscriber ID" required>
+        <input type="text" id="newsletter-name-update" placeholder="Name">
+        <input type="email" id="newsletter-email-update" placeholder="Email">
+        <button type="button" onclick="updateNewsletter()">Update Subscriber</button>
+        <h3>Delete Newsletter Subscriber</h3>
+        <input type="text" id="newsletter-id-delete" placeholder="Subscriber ID" required>
+        <button type="button" onclick="deleteNewsletter()">Delete Subscriber</button>
+    </form>
+
+    <!-- Contacts Form -->
+    <h2>Contacts</h2>
+    <form id="contacts-form">
+        <h3>Get Contacts</h3>
+        <button type="button" onclick="getContacts()">Get Contacts</button>
+        <h3>Add Contact</h3>
+        <input type="text" id="contact-name" placeholder="Name" required>
+        <input type="email" id="contact-email" placeholder="Email" required>
+        <input type="text" id="contact-mobile_no" placeholder="Mobile Number">
+        <input type="text" id="contact-location" placeholder="Location">
+        <button type="button" onclick="addContact()">Add Contact</button>
+        <h3>Update Contact</h3>
+        <input type="text" id="contact-id-update" placeholder="Contact ID" required>
+        <input type="text" id="contact-name-update" placeholder="Name">
+        <input type="email" id="contact-email-update" placeholder="Email">
+        <input type="text" id="contact-mobile_no-update" placeholder="Mobile Number">
+        <input type="text" id="contact-location-update" placeholder="Location">
+        <button type="button" onclick="updateContact()">Update Contact</button>
+        <h3>Delete Contact</h3>
+        <input type="text" id="contact-id-delete" placeholder="Contact ID" required>
+        <button type="button" onclick="deleteContact()">Delete Contact</button>
+    </form>
+
+    <!-- Response Display -->
+    <div id="response" class="response"></div>
+
+    <script>
+        const API_URL = 'https://your-vercel-deployment-url.vercel.app'; // Replace with your Vercel URL
+
+        const handleResponse = (response) => {
+            document.getElementById('response').textContent = JSON.stringify(response, null, 2);
+        };
+
+        const fetchFromAPI = async (endpoint, method = 'GET', body = null) => {
+            try {
+                const response = await fetch(`${API_URL}/${endpoint}`, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: body ? JSON.stringify(body) : null,
+                });
+                const data = await response.json();
+                handleResponse(data);
+            } catch (error) {
+                handleResponse({ error: error.message });
+            }
+        };
+
+        const getClients = () => fetchFromAPI('clients');
+        const addClient = () => fetchFromAPI('clients', 'POST', {
+            name: document.getElementById('client-name').value,
+            description: document.getElementById('client-description').value,
+            image: document.getElementById('client-image').value,
+            designation: document.getElementById('client-designation').value
+        });
+        const updateClient = () => fetchFromAPI(`clients/${document.getElementById('client-id-update').value}`, 'PUT', {
+            name: document.getElementById('client-name-update').value,
+            description: document.getElementById('client-description-update').value,
+            image: document.getElementById('client-image-update').value,
+            designation: document.getElementById('client-designation-update').value
+        });
+        const deleteClient = () => fetchFromAPI(`clients/${document.getElementById('client-id-delete').value}`, 'DELETE');
+
+        const getProjects = () => fetchFromAPI('projects');
+        const addProject = () => fetchFromAPI('projects', 'POST', {
+            name: document.getElementById('project-name').value,
+            description: document.getElementById('project-description').value,
+            image: document.getElementById('project-image').value
+        });
+        const updateProject = () => fetchFromAPI(`projects/${document.getElementById('project-id-update').value}`, 'PUT', {
+            name: document.getElementById('project-name-update').value,
+            description: document.getElementById('project-description-update').value,
+            image: document.getElementById('project-image-update').value
+        });
+        const deleteProject = () => fetchFromAPI(`projects/${document.getElementById('project-id-delete').value}`, 'DELETE');
+
+        const getNewsletter = () => fetchFromAPI('newsletter');
+        const addNewsletter = () => fetchFromAPI('newsletter', 'POST', {
+            name: document.getElementById('newsletter-name').value,
+            email: document.getElementById('newsletter-email').value
+        });
+        const updateNewsletter = () => fetchFromAPI(`newsletter/${document.getElementById('newsletter-id-update').value}`, 'PUT', {
+            name: document.getElementById('newsletter-name-update').value,
+            email: document.getElementById('newsletter-email-update').value
+        });
+        const deleteNewsletter = () => fetchFromAPI(`newsletter/${document.getElementById('newsletter-id-delete').value}`, 'DELETE');
+
+        const getContacts = () => fetchFromAPI('contacts');
+        const addContact = () => fetchFromAPI('contacts', 'POST', {
+            name: document.getElementById('contact-name').value,
+            email: document.getElementById('contact-email').value,
+            mobile_no: document.getElementById('contact-mobile_no').value,
+            location: document.getElementById('contact-location').value
+        });
+        const updateContact = () => fetchFromAPI(`contacts/${document.getElementById('contact-id-update').value}`, 'PUT', {
+            name: document.getElementById('contact-name-update').value,
+            email: document.getElementById('contact-email-update').value,
+            mobile_no: document.getElementById('contact-mobile_no-update').value,
+            location: document.getElementById('contact-location-update').value
+        });
+        const deleteContact = () => fetchFromAPI(`contacts/${document.getElementById('contact-id-delete').value}`, 'DELETE');
+    </script>
+</body>
+</html>
